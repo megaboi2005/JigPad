@@ -1,6 +1,5 @@
 import javax.swing.*;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import java.awt.*;
 import java.awt.event.*;
 
 public class Topbar {

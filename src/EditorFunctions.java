@@ -1,12 +1,23 @@
+import java.awt.Desktop;
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
+import java.net.URI;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 public class EditorFunctions {
+	private static void simulateKey(int key) {
+        int ctrlMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+        int modifiers = ctrlMask; 
+
+        KeyEvent event = new KeyEvent(main.tabs.getTabText(), KeyEvent.KEY_PRESSED, System.currentTimeMillis(), modifiers, key, KeyEvent.CHAR_UNDEFINED);
+        main.tabs.getTabText().dispatchEvent(event);
+	}
+	
 	public EditorFunctions() {
 		
 	}
@@ -15,8 +26,6 @@ public class EditorFunctions {
         JFileChooser fileChooser = new JFileChooser();
         int returnValue = fileChooser.showOpenDialog(null);
         if (returnValue == JFileChooser.APPROVE_OPTION) {
-            // User selected a file
-        	
             main.tabs.addTab(fileChooser.getSelectedFile().getAbsolutePath(),fileChooser.getSelectedFile().getName());
             main.tabs.tabbedPane.setSelectedIndex(main.tabs.tabbedPane.getTabCount()-1);
         }
@@ -42,7 +51,7 @@ public class EditorFunctions {
         try {
             FileWriter writer = new FileWriter(main.tabs.paths.get(main.tabs.tabbedPane.getSelectedIndex()));
             BufferedWriter bufferedWriter = new BufferedWriter(writer);
-            bufferedWriter.write(main.tabs.getTabText());
+            bufferedWriter.write(main.tabs.getTabText().getText());
             bufferedWriter.close();
             JOptionPane.showMessageDialog(main.frame, "File saved successfully!");
         } catch (IOException e) {
@@ -57,7 +66,7 @@ public class EditorFunctions {
             File selectedFile = fileChooser.getSelectedFile();
             
             try (FileWriter writer = new FileWriter(selectedFile)) {
-                writer.write(main.tabs.getTabText());
+                writer.write(main.tabs.getTabText().getText());
                 JOptionPane.showMessageDialog(main.frame, "File saved successfully!");
                 main.tabs.paths.set(main.tabs.tabbedPane.getSelectedIndex(),selectedFile.getAbsolutePath());
                 main.tabs.tabbedPane.setTitleAt(main.tabs.tabbedPane.getSelectedIndex(), selectedFile.getName());
@@ -74,23 +83,28 @@ public class EditorFunctions {
 	}
 	
 	public static void undo() {
-		
+		simulateKey(KeyEvent.VK_Z);
 	}
 	
 	public static void redo() {
-		
+		simulateKey(KeyEvent.VK_Y);
+
 	}
 	
 	public static void copy() {
-		
+		simulateKey(KeyEvent.VK_C);
 	}
 	
 	public static void paste() {
-		
+		simulateKey(KeyEvent.VK_V);
 	}
 	
 	public static void github() {
-		
+        try {
+            Desktop.getDesktop().browse(new URI("https://github.com/megaboi2005/JigPad"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 	}
 }
 

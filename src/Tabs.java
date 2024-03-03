@@ -1,12 +1,8 @@
 import javax.swing.*;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import javax.swing.undo.UndoManager;
+
+import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +47,28 @@ public class Tabs {
         gbc.weighty = 1;
         gbc.fill = GridBagConstraints.BOTH;
 		JTextArea textArea = new JTextArea(35,20);
+        // Create an UndoManager and attach it to the text area's document
+        UndoManager undoManager = new UndoManager();
+        textArea.getDocument().addUndoableEditListener(undoManager);
+
+        KeyStroke undoKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+        textArea.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(undoKeyStroke, "undo");
+        textArea.getActionMap().put("undo", new AbstractAction("Undo") {
+            public void actionPerformed(ActionEvent e) {
+                if (undoManager.canUndo()) {
+                    undoManager.undo();
+                }
+            }
+        });
+        KeyStroke redoKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Y, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+        textArea.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(redoKeyStroke, "redo");
+        textArea.getActionMap().put("redo", new AbstractAction("Redo") {
+            public void actionPerformed(ActionEvent e) {
+                if (undoManager.canRedo()) {
+                    undoManager.redo();
+                }
+            }
+        });
 		textArea.setBorder(BorderFactory.createEmptyBorder());
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(true);
@@ -68,6 +86,27 @@ public class Tabs {
         gbc.weighty = 1;
         gbc.fill = GridBagConstraints.BOTH;
 		JTextArea textArea = new JTextArea(35,20);
+        UndoManager undoManager = new UndoManager();
+        textArea.getDocument().addUndoableEditListener(undoManager);
+
+        KeyStroke undoKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+        textArea.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(undoKeyStroke, "undo");
+        textArea.getActionMap().put("undo", new AbstractAction("Undo") {
+            public void actionPerformed(ActionEvent e) {
+                if (undoManager.canUndo()) {
+                    undoManager.undo();
+                }
+            }
+        });
+        KeyStroke redoKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Y, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+        textArea.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(redoKeyStroke, "redo");
+        textArea.getActionMap().put("redo", new AbstractAction("Redo") {
+            public void actionPerformed(ActionEvent e) {
+                if (undoManager.canRedo()) {
+                    undoManager.redo();
+                }
+            }
+        });
 		textArea.setBorder(BorderFactory.createEmptyBorder());
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(true);
@@ -88,7 +127,7 @@ public class Tabs {
 	}
 	
 	// honestly fucking help this is so gay
-	public String getTabText() {
+	public JTextArea getTabText() {
 	    int selectedIndex = tabbedPane.getSelectedIndex();
 	    if (selectedIndex != -1) {
 	        Component selectedComponent = tabbedPane.getComponentAt(selectedIndex);
@@ -100,7 +139,7 @@ public class Tabs {
 	                    Component viewportView = scrollPane.getViewport().getView();
 	                    if (viewportView instanceof JTextArea) {
 	                        JTextArea textArea = (JTextArea) viewportView;
-	                        return textArea.getText();
+	                        return textArea;
 	                    }
 	                }
 	            }
@@ -109,7 +148,7 @@ public class Tabs {
 	    return null; 
 	}
 
-	
+
 	public String getPath() {
 		return paths.get(tabbedPane.getSelectedIndex());
 	}
