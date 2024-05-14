@@ -126,7 +126,7 @@ public class Tabs {
         
 	}
 	
-	// honestly fucking help this is so gay
+	//scuffed
 	public JTextArea getTabText() {
 	    int selectedIndex = tabbedPane.getSelectedIndex();
 	    if (selectedIndex != -1) {
